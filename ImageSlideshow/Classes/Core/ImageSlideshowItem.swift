@@ -14,6 +14,11 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
     /// Image view to hold the image
     public let imageView = UIImageView()
 
+    open var imageViewContentMode: UIView.ContentMode {
+        get { imageView.contentMode }
+        set { imageView.contentMode = newValue }
+    }
+
     /// Activity indicator shown during image loading, when nil there won't be shown any
     public let activityIndicator: ActivityIndicatorView?
 
@@ -35,7 +40,7 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
     fileprivate var lastFrame = CGRect.zero
     fileprivate var imageReleased = false
     fileprivate var isLoading = false
-    fileprivate var singleTapGestureRecognizer: UITapGestureRecognizer?
+    fileprivate(set) var singleTapGestureRecognizer: UITapGestureRecognizer?
     fileprivate var loadFailed = false {
         didSet {
             singleTapGestureRecognizer?.isEnabled = loadFailed
@@ -185,6 +190,13 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
         } else {
             self.setZoomScale(maximumZoomScale, animated: true)
         }
+    }
+
+    func willEndCurrentItem(_ slideshow: ImageSlideshow) {
+        zoomOut()
+    }
+
+    func willBecomeCurrentItem(_ slideshow: ImageSlideshow) {
     }
 
     fileprivate func screenSize() -> CGSize {

@@ -22,6 +22,9 @@ class ViewController: UIViewController {
     let alamofireSource = [AlamofireSource(urlString: "https://images.unsplash.com/photo-1432679963831-2dab49187847?w=1080")!, AlamofireSource(urlString: "https://images.unsplash.com/photo-1447746249824-4be4e1b76d66?w=1080")!, AlamofireSource(urlString: "https://images.unsplash.com/photo-1463595373836-6e0b0a8ee322?w=1080")!]
     let sdWebImageSource = [SDWebImageSource(urlString: "https://images.unsplash.com/photo-1432679963831-2dab49187847?w=1080")!, SDWebImageSource(urlString: "https://images.unsplash.com/photo-1447746249824-4be4e1b76d66?w=1080")!, SDWebImageSource(urlString: "https://images.unsplash.com/photo-1463595373836-6e0b0a8ee322?w=1080")!]
     let kingfisherSource = [KingfisherSource(urlString: "https://images.unsplash.com/photo-1432679963831-2dab49187847?w=1080")!, KingfisherSource(urlString: "https://images.unsplash.com/photo-1447746249824-4be4e1b76d66?w=1080")!, KingfisherSource(urlString: "https://images.unsplash.com/photo-1463595373836-6e0b0a8ee322?w=1080")!]
+    let videoSource: [InputSource] = [VideoSource(
+                                        videoUrl: URL(string: "https://d16kzk4negkp9h.cloudfront.net/f2/74/75/f27475417e48640a267a4d8c5f0e9ff5/transcoded-9A4C72B4-1850-4D0B-834C-DFB57CA2BD26.mp4?Expires=1609913758&Signature=HflSbl5Xw1pTWlM9UaXEPAApWbejlV9CXxvsJKCNhY4YjoFn5NhZpwiqZovBJpmVPejg4dcthlYE~~DiZJ0RT9VIJuDXnrTrjupy0jKQjg2124BfMZZrTmf1wh~Xv-9NRXBvTlljHbi4~tObPy-CS1RhZmSIaFszIoZB6vmS42U_&Key-Pair-Id=APKAIXBZNN3ZZBIBSIDQ")!,
+                                        options: AVOptions(autoplay: false))]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,7 +40,7 @@ class ViewController: UIViewController {
         slideshow.delegate = self
 
         // can be used with other sample sources as `afNetworkingSource`, `alamofireSource` or `sdWebImageSource` or `kingfisherSource`
-        slideshow.setImageInputs(localSource)
+        slideshow.setImageInputs(videoSource + sdWebImageSource)
 
         let recognizer = UITapGestureRecognizer(target: self, action: #selector(ViewController.didTap))
         slideshow.addGestureRecognizer(recognizer)

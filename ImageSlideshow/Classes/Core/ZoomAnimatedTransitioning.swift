@@ -168,6 +168,9 @@ class ZoomAnimator: NSObject {
 
     init(referenceSlideshowView: ImageSlideshow, parent: ZoomAnimatedTransitioningDelegate) {
         self.referenceSlideshowView = referenceSlideshowView
+        if let avItem = referenceSlideshowView.currentSlideshowItem as? AVSlideshowItem {
+            avItem.imageView.image = avItem.playerViewController.view.renderToImage()
+        }
         self.referenceImageView = referenceSlideshowView.currentSlideshowItem?.imageView
         self.parent = parent
         super.init()
@@ -285,6 +288,9 @@ class ZoomOutAnimator: ZoomAnimator, UIViewControllerAnimatedTransitioning {
 
         var transitionViewInitialFrame: CGRect
         if let currentSlideshowItem = fromViewController.slideshow.currentSlideshowItem {
+            if let avItem = currentSlideshowItem as? AVSlideshowItem {
+                avItem.imageView.image = avItem.playerViewController.view.renderToImage()
+            }
             if let image = currentSlideshowItem.imageView.image {
                 transitionViewInitialFrame = image.tgr_aspectFitRectForSize(currentSlideshowItem.imageView.frame.size)
             } else {
@@ -368,5 +374,18 @@ class ZoomOutAnimator: ZoomAnimator, UIViewControllerAnimatedTransitioning {
             let params = animationParams(using: transitionContext)
             UIView.animate(withDuration: params.0, delay: 0, options: UIViewAnimationOptions(), animations: params.1, completion: params.2)
         }
+    }
+}
+
+private extension UIView {
+    func renderToImage(afterScreenUpdates: Bool = false) -> UIImage {
+        let rendererFormat = UIGraphicsImageRendererFormat.default()
+        rendererFormat.opaque = isOpaque
+        let renderer = UIGraphicsImageRenderer(size: bounds.size, format: rendererFormat)
+
+        let snapshotImage = renderer.image { _ in
+            drawHierarchy(in: bounds, afterScreenUpdates: afterScreenUpdates)
+        }
+        return snapshotImage
     }
 }

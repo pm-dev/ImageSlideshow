@@ -202,7 +202,7 @@ open class ImageSlideshow: UIView {
     open var contentScaleMode: UIViewContentMode = UIViewContentMode.scaleAspectFit {
         didSet {
             for view in slideshowItems {
-                view.imageView.contentMode = contentScaleMode
+                view.imageViewContentMode = contentScaleMode
             }
         }
     }
@@ -323,8 +323,21 @@ open class ImageSlideshow: UIView {
 
         var i = 0
         for image in scrollViewImages {
-            let item = ImageSlideshowItem(image: image, zoomEnabled: zoomEnabled, activityIndicator: activityIndicator?.create(), maximumScale: maximumScale)
-            item.imageView.contentMode = contentScaleMode
+            let item: ImageSlideshowItem
+            if let avSource = image as? AVInputSource {
+                item = AVSlideshowItem(
+                    source: avSource,
+                    zoomEnabled: zoomEnabled,
+                    activityIndicator: activityIndicator?.create(),
+                    maximumScale: maximumScale)
+            } else {
+                item = ImageSlideshowItem(
+                    image: image,
+                    zoomEnabled: zoomEnabled,
+                    activityIndicator: activityIndicator?.create(),
+                    maximumScale: maximumScale)
+            }
+            item.imageViewContentMode = contentScaleMode
             slideshowItems.append(item)
             scrollView.addSubview(item)
             i += 1
@@ -338,6 +351,9 @@ open class ImageSlideshow: UIView {
         }
 
         loadImages(for: scrollViewPage)
+        if slideshowItems.count > scrollViewPage {
+            slideshowItems[scrollViewPage].willBecomeCurrentItem(self)
+        }
     }
 
     private func loadImages(for scrollViewPage: Int) {
@@ -386,10 +402,10 @@ open class ImageSlideshow: UIView {
             scrollViewImages = images
         }
 
+        setTimerIfNeeded()
         reloadScrollView()
         layoutScrollView()
         layoutPageControl()
-        setTimerIfNeeded()
     }
 
     // MARK: paging methods
@@ -442,14 +458,13 @@ open class ImageSlideshow: UIView {
 
     fileprivate func setCurrentPageForScrollViewPage(_ page: Int) {
         if scrollViewPage != page {
-            // current page has changed, zoom out this image
-            if slideshowItems.count > scrollViewPage {
-                slideshowItems[scrollViewPage].zoomOut()
-            }
-        }
-
-        if page != scrollViewPage {
             loadImages(for: page)
+            if slideshowItems.count > scrollViewPage {
+                slideshowItems[scrollViewPage].willEndCurrentItem(self)
+            }
+            if slideshowItems.count > page {
+                slideshowItems[page].willBecomeCurrentItem(self)
+            }
         }
         scrollViewPage = page
         currentPage = currentPageForScrollViewPage(page)

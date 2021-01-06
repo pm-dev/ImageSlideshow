@@ -28,6 +28,9 @@
 		D05B707125A4F9E000A83D66 /* PageIndicatorPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05B706425A4F9E000A83D66 /* PageIndicatorPosition.swift */; };
 		D05B707225A4F9E000A83D66 /* ZoomAnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05B706525A4F9E000A83D66 /* ZoomAnimatedTransitioning.swift */; };
 		D05B707B25A4FA0D00A83D66 /* ImageSlideshow_framework.h in Headers */ = {isa = PBXBuildFile; fileRef = D05B707925A4FA0D00A83D66 /* ImageSlideshow_framework.h */; };
+		D05B710925A5098900A83D66 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D05B710825A5098900A83D66 /* AVFoundation.framework */; };
+		D05B712125A5245C00A83D66 /* AVSlideshowItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05B712025A5245C00A83D66 /* AVSlideshowItem.swift */; };
+		D05B712525A5248F00A83D66 /* AVInputSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05B70EC25A507C900A83D66 /* AVInputSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +74,9 @@
 		D05B706525A4F9E000A83D66 /* ZoomAnimatedTransitioning.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoomAnimatedTransitioning.swift; sourceTree = "<group>"; };
 		D05B707925A4FA0D00A83D66 /* ImageSlideshow_framework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageSlideshow_framework.h; path = ImageSlideshow_framework/ImageSlideshow_framework.h; sourceTree = SOURCE_ROOT; };
 		D05B707A25A4FA0D00A83D66 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = Info.plist; path = ImageSlideshow_framework/Info.plist; sourceTree = SOURCE_ROOT; };
+		D05B70EC25A507C900A83D66 /* AVInputSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVInputSource.swift; sourceTree = "<group>"; };
+		D05B710825A5098900A83D66 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		D05B712025A5245C00A83D66 /* AVSlideshowItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSlideshowItem.swift; sourceTree = "<group>"; };
 		D0E8A9E21D97EB6D007EC517 /* ImageSlideshow.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ImageSlideshow.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD45C56C18E7B8EC08371B86 /* Pods-ImageSlideshow_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageSlideshow_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ImageSlideshow_Example/Pods-ImageSlideshow_Example.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -80,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D05B710925A5098900A83D66 /* AVFoundation.framework in Frameworks */,
 				48A9DE9233FBEA3CF63A8E54 /* Pods_ImageSlideshow_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -186,6 +193,7 @@
 		88C40B0495D05599E2889C22 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D05B710825A5098900A83D66 /* AVFoundation.framework */,
 				8AA07A6EDAC622F1407E6C80 /* Pods_ImageSlideshow_Example.framework */,
 			);
 			name = Frameworks;
@@ -195,6 +203,8 @@
 			isa = PBXGroup;
 			children = (
 				D05B705C25A4F9DF00A83D66 /* ActivityIndicator.swift */,
+				D05B712025A5245C00A83D66 /* AVSlideshowItem.swift */,
+				D05B70EC25A507C900A83D66 /* AVInputSource.swift */,
 				D05B705925A4F9DF00A83D66 /* Bundle+Module.swift */,
 				D05B705F25A4F9E000A83D66 /* FullScreenSlideshowViewController.swift */,
 				D05B705D25A4F9DF00A83D66 /* ImageSlideshow.swift */,
@@ -432,7 +442,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D05B712525A5248F00A83D66 /* AVInputSource.swift in Sources */,
 				D05B707225A4F9E000A83D66 /* ZoomAnimatedTransitioning.swift in Sources */,
+				D05B712125A5245C00A83D66 /* AVSlideshowItem.swift in Sources */,
 				D05B706625A4F9E000A83D66 /* Bundle+Module.swift in Sources */,
 				D05B707025A4F9E000A83D66 /* SwiftSupport.swift in Sources */,
 				D05B706F25A4F9E000A83D66 /* UIImageView+Tools.swift in Sources */,
