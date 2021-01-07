@@ -22,6 +22,8 @@ class TableViewController: UITableViewController {
 
     let models = [Model(image: UIImage(named: "img1")!, title: "First image"), Model(image: UIImage(named: "img2")!, title: "Second image"), Model(image: UIImage(named: "img3")!, title: "Third image"), Model(image: UIImage(named: "img4")!, title: "Fourth image")]
 
+    lazy var dataSource = AVSlideshowDataSource(inputs: models.map { $0.inputSource })
+
     var slideshowTransitioningDelegate: ZoomAnimatedTransitioningDelegate? = nil
 
     // MARK: - Table view data source
@@ -47,7 +49,8 @@ class TableViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
 
         let fullScreenController = FullScreenSlideshowViewController()
-        fullScreenController.inputs = models.map { $0.inputSource }
+        fullScreenController.slideshow.dataSource = dataSource
+        fullScreenController.slideshow.reloadData()
         fullScreenController.initialPage = indexPath.row
 
         if let cell = tableView.cellForRow(at: indexPath), let imageView = cell.imageView {

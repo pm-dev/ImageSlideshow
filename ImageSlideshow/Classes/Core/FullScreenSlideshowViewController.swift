@@ -34,9 +34,6 @@ open class FullScreenSlideshowViewController: UIViewController {
     /// Index of initial image
     open var initialPage: Int = 0
 
-    /// Input sources to 
-    open var inputs: [InputSource]?
-
     /// Background color
     open var backgroundColor = UIColor.black
 
@@ -65,9 +62,7 @@ open class FullScreenSlideshowViewController: UIViewController {
         view.backgroundColor = backgroundColor
         slideshow.backgroundColor = backgroundColor
 
-        if let inputs = inputs {
-            slideshow.setImageInputs(inputs)
-        }
+        slideshow.reloadData()
 
         view.addSubview(slideshow)
 
@@ -93,7 +88,7 @@ open class FullScreenSlideshowViewController: UIViewController {
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        slideshow.slideshowItems.forEach { $0.cancelPendingLoad() }
+        slideshow.slideshowItems.forEach { $0.willBeRemoved(from: slideshow) }
 
         // Prevents broken dismiss transition when image is zoomed in
         slideshow.currentSlideshowItem?.zoomOut()

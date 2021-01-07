@@ -33,7 +33,13 @@ Image slideshow is a Swift library providing customizable image slideshow with c
 
   s.subspec 'Core' do |core|
     core.source_files = 'ImageSlideshow/Classes/Core/**/*'
-    core.resources = 'ImageSlideshow/Assets/*.png'
+    core.resources = 'ImageSlideshow/Assets/ic_*.png'
+  end
+
+  s.subspec 'AV' do |subspec|
+    subspec.dependency 'ImageSlideshow/Core'
+    subspec.source_files = 'ImageSlideshow/Classes/InputSources/AV*.swift'
+    subspec.resources = 'ImageSlideshow/Assets/AVAssets.xcassets'
   end
 
   s.subspec 'AFURL' do |subspec|

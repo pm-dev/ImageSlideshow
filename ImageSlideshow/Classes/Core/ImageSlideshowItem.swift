@@ -9,15 +9,9 @@ import UIKit
 
 /// Used to wrap a single slideshow item and allow zooming on it
 @objcMembers
-open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
+open class ImageSlideshowItem: UIScrollView, SlideshowItemProtocol {
 
-    /// Image view to hold the image
-    public let imageView = UIImageView()
-
-    open var imageViewContentMode: UIView.ContentMode {
-        get { imageView.contentMode }
-        set { imageView.contentMode = newValue }
-    }
+    private let imageView = UIImageView()
 
     /// Activity indicator shown during image loading, when nil there won't be shown any
     public let activityIndicator: ActivityIndicatorView?
@@ -30,9 +24,6 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
 
     /// Holds if the zoom feature is enabled
     public let zoomEnabled: Bool
-
-    /// If set to true image is initially zoomed in
-    open var zoomInInitially = false
 
     /// Maximum zoom scale
     open var maximumScale: CGFloat = 2.0
@@ -49,7 +40,7 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
     }
 
     /// Wraps around ImageView so RTL transformation on it doesn't interfere with UIScrollView zooming
-    private let imageViewWrapper = UIView()
+    let imageViewWrapper = UIView()
 
     // MARK: - Life cycle
 
@@ -58,11 +49,12 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
         - parameter image: Input Source to load the image
         - parameter zoomEnabled: holds if it should be possible to zoom-in the image
     */
-    init(image: InputSource, zoomEnabled: Bool, activityIndicator: ActivityIndicatorView? = nil, maximumScale: CGFloat = 2.0) {
+    init(image: InputSource, zoomEnabled: Bool, activityIndicator: ActivityIndicatorView? = nil, maximumScale: CGFloat = 2.0, mediaContentMode: UIView.ContentMode) {
         self.zoomEnabled = zoomEnabled
         self.image = image
         self.activityIndicator = activityIndicator
         self.maximumScale = maximumScale
+        self.imageView.contentMode = mediaContentMode
 
         super.init(frame: CGRect.null)
 
@@ -166,7 +158,7 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
         self.imageView.image = nil
     }
 
-    public func cancelPendingLoad() {
+    func cancelPendingLoad() {
         image.cancelLoad?(on: imageView)
     }
 
@@ -174,15 +166,50 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
         self.loadImage()
     }
 
-    // MARK: - Image zoom & size
+    // MARK: - ImageSlideshowItem
 
-    func isZoomed() -> Bool {
+    open func transitionImageView() -> UIImageView {
+        imageView
+    }
+
+    open var zoomInInitially = false
+
+    open func isZoomed() -> Bool {
         return self.zoomScale != self.minimumZoomScale
     }
 
-    func zoomOut() {
+    open func zoomOut() {
         self.setZoomScale(minimumZoomScale, animated: false)
     }
+
+    open var mediaContentMode: UIView.ContentMode {
+        get { imageView.contentMode }
+        set { imageView.contentMode = newValue }
+    }
+
+    open func didAppear(in slideshow: ImageSlideshow) {}
+
+    open func didDisappear(in slideshow: ImageSlideshow) {
+        zoomOut()
+    }
+
+    open func willStartZoomTransition(_ type: ZoomAnimatedTransitionType) {}
+
+    open func didEndZoomTransition(_ type: ZoomAnimatedTransitionType) {}
+
+    open func willBeRemoved(from slideshow: ImageSlideshow) {
+        cancelPendingLoad()
+    }
+
+    open func loadMedia() {
+        loadImage()
+    }
+
+    open func releaseMedia() {
+        releaseImage()
+    }
+
+    // MARK: - Image zoom & size
 
     func tapZoom() {
         if isZoomed() {
@@ -190,13 +217,6 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
         } else {
             self.setZoomScale(maximumZoomScale, animated: true)
         }
-    }
-
-    func willEndCurrentItem(_ slideshow: ImageSlideshow) {
-        zoomOut()
-    }
-
-    func willBecomeCurrentItem(_ slideshow: ImageSlideshow) {
     }
 
     fileprivate func screenSize() -> CGSize {

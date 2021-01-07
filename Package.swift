@@ -35,10 +35,12 @@ let package = Package(
                 "Classes/Core/Bundle+Module.swift",
                 "Classes/Core/FullScreenSlideshowViewController.swift",
                 "Classes/Core/ImageSlideshow.swift",
+                "Classes/Core/ImageSlideshowDataSource.swift",
                 "Classes/Core/ImageSlideshowItem.swift",
                 "Classes/Core/InputSource.swift",
                 "Classes/Core/PageIndicator.swift",
                 "Classes/Core/PageIndicatorPosition.swift",
+                "Classes/Core/SlideshowItem.swift",
                 "Classes/Core/SwiftSupport.swift",
                 "Classes/Core/UIImage+AspectFit.swift",
                 "Classes/Core/UIImageView+Tools.swift",
@@ -62,7 +64,15 @@ let package = Package(
             name: "ImageSlideshowKingfisher",
             dependencies: ["ImageSlideshow", "Kingfisher"],
             path: "ImageSlideshow/Classes/InputSources",
-            sources: ["KingfisherSource.swift"])
+            sources: ["KingfisherSource.swift"]),
+        .target(
+            name: "ImageSlideshowAV",
+            dependencies: ["ImageSlideshow"],
+            path: "ImageSlideshow/Classes/InputSources",
+            sources: ["AVSlideshowItem.swift", "AVInputSource.swift", "AVSlideshowDataSource.swift"],
+            resources: [
+                .copy("Assets/AVAssets.xcassets"),
+            ])
     ],
     swiftLanguageVersions: [.v4, .v4_2, .v5]
 )

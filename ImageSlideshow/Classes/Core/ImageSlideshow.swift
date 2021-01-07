@@ -8,6 +8,14 @@
 import UIKit
 
 @objc
+public protocol SlideshowDataSource: class {
+
+    @objc func inputsIn(_ slideshow: ImageSlideshow) -> [InputSource]
+
+    @objc func itemFor(_ input: InputSource, in slideshow: ImageSlideshow) -> SlideshowItem
+}
+
+@objc
 /// The delegate protocol informing about image slideshow state changes
 public protocol ImageSlideshowDelegate: class {
     /// Tells the delegate that the current page has changed
@@ -57,6 +65,8 @@ open class ImageSlideshow: UIView {
 
     /// Scroll View to wrap the slideshow
     public let scrollView = UIScrollView()
+
+    public weak var dataSource: SlideshowDataSource?
 
     /// Page Control shown in the slideshow
     @available(*, deprecated, message: "Use pageIndicator.view instead")
@@ -137,7 +147,7 @@ open class ImageSlideshow: UIView {
     open var didEndDecelerating: (() -> Void)?
 
     /// Currenlty displayed slideshow item
-    open var currentSlideshowItem: ImageSlideshowItem? {
+    open var currentSlideshowItem: SlideshowItem? {
         if slideshowItems.count > scrollViewPage {
             return slideshowItems[scrollViewPage]
         } else {
@@ -152,7 +162,7 @@ open class ImageSlideshow: UIView {
     open fileprivate(set) var images = [InputSource]()
 
     /// Image Slideshow Items loaded to slideshow
-    open fileprivate(set) var slideshowItems = [ImageSlideshowItem]()
+    open fileprivate(set) var slideshowItems = [SlideshowItem]()
 
     // MARK: - Preferences
 
@@ -202,7 +212,7 @@ open class ImageSlideshow: UIView {
     open var contentScaleMode: UIViewContentMode = UIViewContentMode.scaleAspectFit {
         didSet {
             for view in slideshowItems {
-                view.imageViewContentMode = contentScaleMode
+                view.mediaContentMode = contentScaleMode
             }
         }
     }
@@ -321,26 +331,12 @@ open class ImageSlideshow: UIView {
         }
         slideshowItems = []
 
-        var i = 0
-        for image in scrollViewImages {
-            let item: ImageSlideshowItem
-            if let avSource = image as? AVInputSource {
-                item = AVSlideshowItem(
-                    source: avSource,
-                    zoomEnabled: zoomEnabled,
-                    activityIndicator: activityIndicator?.create(),
-                    maximumScale: maximumScale)
-            } else {
-                item = ImageSlideshowItem(
-                    image: image,
-                    zoomEnabled: zoomEnabled,
-                    activityIndicator: activityIndicator?.create(),
-                    maximumScale: maximumScale)
+        if let dataSource = dataSource {
+            for image in scrollViewImages {
+                let item = dataSource.itemFor(image, in: self)
+                slideshowItems.append(item)
+                scrollView.addSubview(item)
             }
-            item.imageViewContentMode = contentScaleMode
-            slideshowItems.append(item)
-            scrollView.addSubview(item)
-            i += 1
         }
 
         if circular && (scrollViewImages.count > 1) {
@@ -352,7 +348,7 @@ open class ImageSlideshow: UIView {
 
         loadImages(for: scrollViewPage)
         if slideshowItems.count > scrollViewPage {
-            slideshowItems[scrollViewPage].willBecomeCurrentItem(self)
+            slideshowItems[scrollViewPage].didAppear(in: self)
         }
     }
 
@@ -363,25 +359,30 @@ open class ImageSlideshow: UIView {
             let item = slideshowItems[i]
             switch preload {
             case .all:
-                item.loadImage()
+                item.loadMedia()
             case .fixed(let offset):
                 // if circular scrolling is enabled and image is on the edge, a helper ("dummy") image on the other side needs to be loaded too
                 let circularEdgeLoad = circular && ((scrollViewPage == 0 && i == totalCount-3) || (scrollViewPage == 0 && i == totalCount-2) || (scrollViewPage == totalCount-2 && i == 1))
 
                 // load image if page is in range of loadOffset, else release image
                 let shouldLoad = abs(scrollViewPage-i) <= offset || abs(scrollViewPage-i) > totalCount-offset || circularEdgeLoad
-                shouldLoad ? item.loadImage() : item.releaseImage()
+                shouldLoad ? item.loadMedia() : item.releaseMedia()
             }
         }
     }
 
     // MARK: - Image setting
 
+    open func reloadData() {
+        let inputs = dataSource?.inputsIn(self) ?? []
+        setImageInputs(inputs)
+    }
+
     /**
      Set image inputs into the image slideshow
      - parameter inputs: Array of InputSource instances.
      */
-    open func setImageInputs(_ inputs: [InputSource]) {
+    private func setImageInputs(_ inputs: [InputSource]) {
         images = inputs
         pageIndicator?.numberOfPages = inputs.count
 
@@ -460,10 +461,10 @@ open class ImageSlideshow: UIView {
         if scrollViewPage != page {
             loadImages(for: page)
             if slideshowItems.count > scrollViewPage {
-                slideshowItems[scrollViewPage].willEndCurrentItem(self)
+                slideshowItems[scrollViewPage].didDisappear(in: self)
             }
             if slideshowItems.count > page {
-                slideshowItems[page].willBecomeCurrentItem(self)
+                slideshowItems[page].didAppear(in: self)
             }
         }
         scrollViewPage = page
@@ -562,7 +563,7 @@ open class ImageSlideshow: UIView {
         }
 
         fullscreen.initialPage = currentPage
-        fullscreen.inputs = images
+        fullscreen.slideshow.dataSource = dataSource
         slideshowTransitioningDelegate = ZoomAnimatedTransitioningDelegate(slideshowView: self, slideshowController: fullscreen)
         fullscreen.transitioningDelegate = slideshowTransitioningDelegate
         fullscreen.modalPresentationStyle = .custom
