@@ -23,7 +23,7 @@ class ViewController: UIViewController {
     let sdWebImageSource = [SDWebImageSource(urlString: "https://images.unsplash.com/photo-1432679963831-2dab49187847?w=1080")!, SDWebImageSource(urlString: "https://images.unsplash.com/photo-1447746249824-4be4e1b76d66?w=1080")!, SDWebImageSource(urlString: "https://images.unsplash.com/photo-1463595373836-6e0b0a8ee322?w=1080")!]
     let kingfisherSource = [KingfisherSource(urlString: "https://images.unsplash.com/photo-1432679963831-2dab49187847?w=1080")!, KingfisherSource(urlString: "https://images.unsplash.com/photo-1447746249824-4be4e1b76d66?w=1080")!, KingfisherSource(urlString: "https://images.unsplash.com/photo-1463595373836-6e0b0a8ee322?w=1080")!]
     let videoSource: [InputSource] = [AVInputSource(
-                                        url: URL(string: "https://d16kzk4negkp9h.cloudfront.net/be/1d/47/be1d471f4ea1eedfc811ddc23b217f28/transcoded-_data_user_0_com.nextdoor.android.rc_cache_16098478354299151659910170970293.mp4?Expires=1610004383&Signature=IIwsI9g8K1ucKbu6sT308LeVP1tDWA2xccjg9EbNs-1OdBstdtUY8ru7dtFDz3sYxDdNmqf8kZdEo9agA3BpRorv-Ex0CSlLFiI3B-mUx1p2cTTivxp~ZeGbVhSjO2bm1BGSK4JTnuh4Qh6Ut1w6cgSBQMCvXAwn7S6ZPpC~fYE_&Key-Pair-Id=APKAIXBZNN3ZZBIBSIDQ")!,
+                                        url: URL(string: "https://d16kzk4negkp9h.cloudfront.net/be/1d/47/be1d471f4ea1eedfc811ddc23b217f28/transcoded-_data_user_0_com.nextdoor.android.rc_cache_16098478354299151659910170970293.mp4?Expires=1610008217&Signature=SBjW~YNqthisJgvi2oMvKc~JyFnxILmY4uNypUnzt-8JgDUlMEunAKxrI5Un4OeQ~viB8D0-CUlrlIW2ECwXOhUpjlM9BR9iNDZx9rRGs5uVpTNdoxV9gjjgK4~s24uMpx7VqVthEy5Cc58pajhLgxWplAv0rmY67yBAYm8yx9g_&Key-Pair-Id=APKAIXBZNN3ZZBIBSIDQ")!,
                                         autoplay: true)]
 
 

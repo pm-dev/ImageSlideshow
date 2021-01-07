@@ -7,9 +7,51 @@
 
 import UIKit
 
+public protocol ZoomableSlideshowItem: SlideshowItemProtocol {
+    var contentView: UIView { get }
+
+    var maximumScale: CGFloat { get }
+
+    var zoomEnabled: Bool { get }
+}
+
+extension ZoomableSlideshowItem where Self: UIScrollView {
+    // MARK: - Image zoom & size
+
+    func screenSize() -> CGSize {
+        return CGSize(width: frame.width, height: frame.height)
+    }
+
+    func calculateMaximumScale() -> CGFloat {
+        return maximumScale
+    }
+
+    func setContentViewToCenter() {
+        var intendHorizon = (screenSize().width - contentView.frame.width ) / 2
+        var intendVertical = (screenSize().height - contentView.frame.height ) / 2
+        intendHorizon = intendHorizon > 0 ? intendHorizon : 0
+        intendVertical = intendVertical > 0 ? intendVertical : 0
+        contentInset = UIEdgeInsets(top: intendVertical, left: intendHorizon, bottom: intendVertical, right: intendHorizon)
+    }
+
+    func isFullScreen() -> Bool {
+        return contentView.frame.width >= screenSize().width && contentView.frame.height >= screenSize().height
+    }
+
+    func clearContentInsets() {
+        contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    }
+}
+
+
+
 /// Used to wrap a single slideshow item and allow zooming on it
 @objcMembers
-open class ImageSlideshowItem: UIScrollView, SlideshowItemProtocol {
+open class ImageSlideshowItem: UIScrollView, SlideshowItemProtocol, ZoomableSlideshowItem {
+
+    public var contentView: UIView {
+        imageViewWrapper
+    }
 
     private let imageView = UIImageView()
 
@@ -72,7 +114,7 @@ open class ImageSlideshowItem: UIScrollView, SlideshowItemProtocol {
             imageView.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi))
         }
 
-        setPictoCenter()
+        setContentViewToCenter()
 
         // scroll view configuration
         delegate = self
@@ -114,7 +156,7 @@ open class ImageSlideshowItem: UIScrollView, SlideshowItemProtocol {
         if isFullScreen() {
             clearContentInsets()
         } else {
-            setPictoCenter()
+            setContentViewToCenter()
         }
 
         self.activityIndicator?.view.center = imageViewWrapper.center
@@ -209,20 +251,6 @@ open class ImageSlideshowItem: UIScrollView, SlideshowItemProtocol {
         releaseImage()
     }
 
-    // MARK: - Image zoom & size
-
-    func tapZoom() {
-        if isZoomed() {
-            self.setZoomScale(minimumZoomScale, animated: true)
-        } else {
-            self.setZoomScale(maximumZoomScale, animated: true)
-        }
-    }
-
-    fileprivate func screenSize() -> CGSize {
-        return CGSize(width: frame.width, height: frame.height)
-    }
-
     fileprivate func calculatePictureSize() -> CGSize {
         if let image = imageView.image, imageView.contentMode == .scaleAspectFit {
             let picSize = image.size
@@ -239,34 +267,21 @@ open class ImageSlideshowItem: UIScrollView, SlideshowItemProtocol {
         }
     }
 
-    fileprivate func calculateMaximumScale() -> CGFloat {
-        return maximumScale
-    }
-
-    fileprivate func setPictoCenter() {
-        var intendHorizon = (screenSize().width - imageViewWrapper.frame.width ) / 2
-        var intendVertical = (screenSize().height - imageViewWrapper.frame.height ) / 2
-        intendHorizon = intendHorizon > 0 ? intendHorizon : 0
-        intendVertical = intendVertical > 0 ? intendVertical : 0
-        contentInset = UIEdgeInsets(top: intendVertical, left: intendHorizon, bottom: intendVertical, right: intendHorizon)
-    }
-
-    private func isFullScreen() -> Bool {
-        return imageViewWrapper.frame.width >= screenSize().width && imageViewWrapper.frame.height >= screenSize().height
-    }
-
-    func clearContentInsets() {
-        contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    func tapZoom() {
+        if isZoomed() {
+            self.setZoomScale(minimumZoomScale, animated: true)
+        } else {
+            self.setZoomScale(maximumZoomScale, animated: true)
+        }
     }
 
     // MARK: UIScrollViewDelegate
 
-    open func scrollViewDidZoom(_ scrollView: UIScrollView) {
-        setPictoCenter()
+    public func scrollViewDidZoom(_ scrollView: UIScrollView) {
+        setContentViewToCenter()
     }
 
-    open func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return zoomEnabled ? imageViewWrapper : nil
+    public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return zoomEnabled ? contentView : nil
     }
-
 }
