@@ -7,28 +7,22 @@
 
 import UIKit
 
-public typealias SlideshowItem = SlideshowItemProtocol & UIScrollView
+public typealias SlideshowItem = SlideshowItemProtocol & UIView
 
 @objc
-public protocol SlideshowItemProtocol: UIScrollViewDelegate {
+public protocol SlideshowItemProtocol {
 
     var mediaContentMode: UIView.ContentMode { get set }
 
     func transitionImageView() -> UIImageView
 
-    var zoomInInitially: Bool { get }
-
-    func isZoomed() -> Bool
-
-    func zoomOut()
-
     func didAppear(in slideshow: ImageSlideshow)
 
     func didDisappear(in slideshow: ImageSlideshow)
 
-    func willStartZoomTransition(_ type: ZoomAnimatedTransitionType)
+    func willStartFullscreenTransition(_ type: FullscreenTransitionType)
 
-    func didEndZoomTransition(_ type: ZoomAnimatedTransitionType)
+    func didEndFullscreenTransition(_ type: FullscreenTransitionType)
 
     func willBeRemoved(from slideshow: ImageSlideshow)
 

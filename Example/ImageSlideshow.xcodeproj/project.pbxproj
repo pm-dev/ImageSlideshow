@@ -15,6 +15,7 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		D007954F2043262C0053E25F /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D007954E2043262C0053E25F /* TableViewController.swift */; };
+		D0320B9425A78D86003A1F54 /* ZoomableSlideshowItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0320B9325A78D86003A1F54 /* ZoomableSlideshowItem.swift */; };
 		D05B706625A4F9E000A83D66 /* Bundle+Module.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05B705925A4F9DF00A83D66 /* Bundle+Module.swift */; };
 		D05B706825A4F9E000A83D66 /* UIImage+AspectFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05B705B25A4F9DF00A83D66 /* UIImage+AspectFit.swift */; };
 		D05B706925A4F9E000A83D66 /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05B705C25A4F9DF00A83D66 /* ActivityIndicator.swift */; };
@@ -60,6 +61,7 @@
 		749E212B852A3FE6757C1D36 /* ImageSlideshow.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ImageSlideshow.podspec; path = ../ImageSlideshow.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		8AA07A6EDAC622F1407E6C80 /* Pods_ImageSlideshow_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ImageSlideshow_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D007954E2043262C0053E25F /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
+		D0320B9325A78D86003A1F54 /* ZoomableSlideshowItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomableSlideshowItem.swift; sourceTree = "<group>"; };
 		D05B705925A4F9DF00A83D66 /* Bundle+Module.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+Module.swift"; sourceTree = "<group>"; };
 		D05B705B25A4F9DF00A83D66 /* UIImage+AspectFit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+AspectFit.swift"; sourceTree = "<group>"; };
 		D05B705C25A4F9DF00A83D66 /* ActivityIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 				D05B706325A4F9E000A83D66 /* SwiftSupport.swift */,
 				D05B705B25A4F9DF00A83D66 /* UIImage+AspectFit.swift */,
 				D05B706225A4F9E000A83D66 /* UIImageView+Tools.swift */,
+				D0320B9325A78D86003A1F54 /* ZoomableSlideshowItem.swift */,
 				D05B706525A4F9E000A83D66 /* ZoomAnimatedTransitioning.swift */,
 				D05B707925A4FA0D00A83D66 /* ImageSlideshow_framework.h */,
 				D05B707A25A4FA0D00A83D66 /* Info.plist */,
@@ -455,6 +458,7 @@
 				D05B706D25A4F9E000A83D66 /* ImageSlideshowItem.swift in Sources */,
 				D05B706825A4F9E000A83D66 /* UIImage+AspectFit.swift in Sources */,
 				D05B707125A4F9E000A83D66 /* PageIndicatorPosition.swift in Sources */,
+				D0320B9425A78D86003A1F54 /* ZoomableSlideshowItem.swift in Sources */,
 				D05B706B25A4F9E000A83D66 /* PageIndicator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

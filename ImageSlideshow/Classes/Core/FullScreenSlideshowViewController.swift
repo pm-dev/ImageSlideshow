@@ -91,7 +91,9 @@ open class FullScreenSlideshowViewController: UIViewController {
         slideshow.slideshowItems.forEach { $0.willBeRemoved(from: slideshow) }
 
         // Prevents broken dismiss transition when image is zoomed in
-        slideshow.currentSlideshowItem?.zoomOut()
+        if let zoomable = slideshow.currentSlideshowItem as? ZoomableSlideshowItem {
+            zoomable.zoomOut()
+        }
     }
 
     open override func viewDidLayoutSubviews() {

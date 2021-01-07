@@ -44,6 +44,7 @@ let package = Package(
                 "Classes/Core/SwiftSupport.swift",
                 "Classes/Core/UIImage+AspectFit.swift",
                 "Classes/Core/UIImageView+Tools.swift",
+                "Classes/Core/ZoomableSlideshowItem.swift",
                 "Classes/Core/ZoomAnimatedTransitioning.swift",
             ],
             resources: [

@@ -12,52 +12,36 @@ import UIKit
 import ImageSlideshow
 #endif
 
-public class AVSlideshowItem: UIScrollView, SlideshowItemProtocol, ZoomableSlideshowItem {
+public class AVSlideshowItem: AVPlayerView, SlideshowItemProtocol {
 
-    private let playerView: AVPlayerView
     private let source: AVInputSource
     private var playerTimeControlStatusObservation: NSKeyValueObservation?
-    private var isCurrentItem: Bool = false
     private var activityIndicator: ActivityIndicatorView?
     private let pausedOverlayView: UIView?
-    private weak var transitionView: UIImageView?
+    private let transitionView: UIImageView
 
     public init(
         source: AVInputSource,
         pausedOverlayView: UIView? = nil,
         activityIndicator: ActivityIndicatorView? = nil,
-        mediaContentMode: UIView.ContentMode,
-        zoomEnabled: Bool,
-        maximumScale: CGFloat = 2.0) {
+        mediaContentMode: UIView.ContentMode) {
         self.source = source
-        self.playerView = AVPlayerView()
         self.mediaContentMode = mediaContentMode
         self.activityIndicator = activityIndicator
         self.pausedOverlayView = pausedOverlayView
-        self.zoomEnabled = zoomEnabled
-        self.maximumScale = maximumScale
+        self.transitionView = UIImageView()
         super.init(frame: .zero)
-        maximumZoomScale = maximumScale
-        delegate = self
-        showsVerticalScrollIndicator = false
-        showsHorizontalScrollIndicator = false
-        minimumZoomScale = 1.0
         addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didSingleTap)))
-        if zoomEnabled {
-            let doubleTap = UITapGestureRecognizer(target: self, action: #selector(didDoubleTap))
-            doubleTap.numberOfTapsRequired = 2
-            addGestureRecognizer(doubleTap)
-        }
-        playerView.player = source.player
+        player = source.player
         setPlayerViewVideoGravity()
-
-        playerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        addSubview(playerView)
+        // Stays hidden, but needs to be apart of the view heirarchy due to how the zoom animation works.
+        transitionView.isHidden = true
+        embed(transitionView)
         if let pausedOverlayView = pausedOverlayView {
-            playerView.embed(pausedOverlayView)
+            embed(pausedOverlayView)
         }
         if let activityView = activityIndicator?.view {
-            playerView.embed(activityView)
+            embed(activityView)
         }
         playerTimeControlStatusObservation = source.player.observe(\.timeControlStatus) { [weak self] player, _ in
             guard let self = self else { return }
@@ -85,32 +69,6 @@ public class AVSlideshowItem: UIScrollView, SlideshowItemProtocol, ZoomableSlide
         fatalError("init(coder:) has not been implemented")
     }
 
-    override open func layoutSubviews() {
-        super.layoutSubviews()
-
-        if !zoomEnabled {
-            playerView.frame.size = bounds.size
-        } else if !isZoomed() {
-            playerView.frame.size = playerView.videoRect.size
-        }
-
-        if isFullScreen() {
-            clearContentInsets()
-        } else {
-            setContentViewToCenter()
-        }
-
-//        // if self.frame was changed and zoomInInitially enabled, zoom in
-//        if lastFrame != frame && zoomInInitially {
-//            setZoomScale(maximumZoomScale, animated: false)
-//        }
-//
-//        lastFrame = self.frame
-
-        contentSize = playerView.frame.size
-        maximumZoomScale = calculateMaximumScale()
-    }
-
     @objc
     private func playerItemDidPlayToEndTime(notification: Notification) {
         source.player.seek(to: .zero)        
@@ -128,9 +86,9 @@ public class AVSlideshowItem: UIScrollView, SlideshowItemProtocol, ZoomableSlide
     
     private func setPlayerViewVideoGravity() {
         switch mediaContentMode {
-        case .scaleAspectFill: playerView.videoGravity = .resizeAspectFill
-        case .scaleToFill: playerView.videoGravity = .resize
-        default: playerView.videoGravity = .resizeAspect
+        case .scaleAspectFill: videoGravity = .resizeAspectFill
+        case .scaleToFill: videoGravity = .resize
+        default: videoGravity = .resizeAspect
         }
     }
 
@@ -142,21 +100,9 @@ public class AVSlideshowItem: UIScrollView, SlideshowItemProtocol, ZoomableSlide
         }
     }
 
-    public func isZoomed() -> Bool {
-        return self.zoomScale != self.minimumZoomScale
-    }
-
-    public func zoomOut() {
-        self.setZoomScale(minimumZoomScale, animated: false)
-    }
-
-    public func didEndZoomTransition(_ type: ZoomAnimatedTransitionType) {}
+    public func didEndFullscreenTransition(_ type: FullscreenTransitionType) {}
 
     public func willBeRemoved(from slideshow: ImageSlideshow) {}
-
-    public var zoomInInitially: Bool {
-        false
-    }
 
     public func loadMedia() {
         _ = source.player
@@ -165,23 +111,18 @@ public class AVSlideshowItem: UIScrollView, SlideshowItemProtocol, ZoomableSlide
     public func releaseMedia() {}
 
     public func transitionImageView() -> UIImageView {
-        let imageView = UIImageView(frame: CGRect(origin: .zero, size: playerView.videoRect.size))
-        imageView.contentMode = mediaContentMode
-        imageView.image = playerView.renderToImage(rect: playerView.videoRect)
-        imageView.isHidden = true
-        insertSubview(imageView, at: 0)
-        transitionView?.removeFromSuperview()
-        transitionView = imageView
-        return imageView
+        transitionView.frame = videoRect
+        transitionView.contentMode = mediaContentMode
+        transitionView.image = renderToImage(rect: transitionView.frame)
+        return transitionView
     }
 
-    public func willStartZoomTransition(_ type: ZoomAnimatedTransitionType) {
+    public func willStartFullscreenTransition(_ type: FullscreenTransitionType) {
         source.player.pause()
     }
 
     public func didAppear(in slideshow: ImageSlideshow) {
         slideshow.pauseTimer()
-        isCurrentItem = true
         if source.autoplay {
             source.player.play()
         }
@@ -189,35 +130,7 @@ public class AVSlideshowItem: UIScrollView, SlideshowItemProtocol, ZoomableSlide
 
     public func didDisappear(in slideshow: ImageSlideshow) {
         slideshow.unpauseTimer()
-        isCurrentItem = false
         source.player.pause()
-    }
-
-    // MARK: ZoomableSlideshowItem
-
-    public var contentView: UIView {
-        playerView
-    }
-
-    public var maximumScale: CGFloat
-
-    public var zoomEnabled: Bool
-
-    @objc
-    func didDoubleTap() {
-        if isZoomed() {
-            self.setZoomScale(minimumZoomScale, animated: true)
-        } else {
-            self.setZoomScale(maximumZoomScale, animated: true)
-        }
-    }
-
-    public func scrollViewDidZoom(_ scrollView: UIScrollView) {
-        setContentViewToCenter()
-    }
-
-    public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return zoomEnabled ? contentView : nil
     }
 }
 

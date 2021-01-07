@@ -314,8 +314,8 @@ open class ImageSlideshow: UIView {
         scrollView.contentSize = CGSize(width: scrollView.frame.size.width * CGFloat(scrollViewImages.count), height: scrollView.frame.size.height)
 
         for (index, view) in slideshowItems.enumerated() {
-            if !view.zoomInInitially {
-                view.zoomOut()
+            if let zoomable = view as? ZoomableSlideshowItem, !zoomable.zoomInInitially {
+                zoomable.zoomOut()
             }
             view.frame = CGRect(x: scrollView.frame.size.width * CGFloat(index), y: 0, width: scrollView.frame.size.width, height: scrollView.frame.size.height)
         }

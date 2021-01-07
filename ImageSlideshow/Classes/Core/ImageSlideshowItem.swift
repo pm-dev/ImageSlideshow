@@ -7,51 +7,9 @@
 
 import UIKit
 
-public protocol ZoomableSlideshowItem: SlideshowItemProtocol {
-    var contentView: UIView { get }
-
-    var maximumScale: CGFloat { get }
-
-    var zoomEnabled: Bool { get }
-}
-
-extension ZoomableSlideshowItem where Self: UIScrollView {
-    // MARK: - Image zoom & size
-
-    func screenSize() -> CGSize {
-        return CGSize(width: frame.width, height: frame.height)
-    }
-
-    func calculateMaximumScale() -> CGFloat {
-        return maximumScale
-    }
-
-    func setContentViewToCenter() {
-        var intendHorizon = (screenSize().width - contentView.frame.width ) / 2
-        var intendVertical = (screenSize().height - contentView.frame.height ) / 2
-        intendHorizon = intendHorizon > 0 ? intendHorizon : 0
-        intendVertical = intendVertical > 0 ? intendVertical : 0
-        contentInset = UIEdgeInsets(top: intendVertical, left: intendHorizon, bottom: intendVertical, right: intendHorizon)
-    }
-
-    func isFullScreen() -> Bool {
-        return contentView.frame.width >= screenSize().width && contentView.frame.height >= screenSize().height
-    }
-
-    func clearContentInsets() {
-        contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-    }
-}
-
-
-
 /// Used to wrap a single slideshow item and allow zooming on it
 @objcMembers
-open class ImageSlideshowItem: UIScrollView, SlideshowItemProtocol, ZoomableSlideshowItem {
-
-    public var contentView: UIView {
-        imageViewWrapper
-    }
+open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate, ZoomableSlideshowItem {
 
     private let imageView = UIImageView()
 
@@ -122,7 +80,7 @@ open class ImageSlideshowItem: UIScrollView, SlideshowItemProtocol, ZoomableSlid
         showsHorizontalScrollIndicator = false
         addSubview(imageViewWrapper)
         minimumZoomScale = 1.0
-        maximumZoomScale = calculateMaximumScale()
+        maximumZoomScale = maximumScale
 
         if let activityIndicator = activityIndicator {
             addSubview(activityIndicator.view)
@@ -169,7 +127,7 @@ open class ImageSlideshowItem: UIScrollView, SlideshowItemProtocol, ZoomableSlid
         lastFrame = self.frame
 
         contentSize = imageViewWrapper.frame.size
-        maximumZoomScale = calculateMaximumScale()
+        maximumZoomScale = maximumScale
     }
 
     /// Request to load Image Source to Image View
@@ -216,14 +174,6 @@ open class ImageSlideshowItem: UIScrollView, SlideshowItemProtocol, ZoomableSlid
 
     open var zoomInInitially = false
 
-    open func isZoomed() -> Bool {
-        return self.zoomScale != self.minimumZoomScale
-    }
-
-    open func zoomOut() {
-        self.setZoomScale(minimumZoomScale, animated: false)
-    }
-
     open var mediaContentMode: UIView.ContentMode {
         get { imageView.contentMode }
         set { imageView.contentMode = newValue }
@@ -235,9 +185,9 @@ open class ImageSlideshowItem: UIScrollView, SlideshowItemProtocol, ZoomableSlid
         zoomOut()
     }
 
-    open func willStartZoomTransition(_ type: ZoomAnimatedTransitionType) {}
+    open func willStartFullscreenTransition(_ type: FullscreenTransitionType) {}
 
-    open func didEndZoomTransition(_ type: ZoomAnimatedTransitionType) {}
+    open func didEndFullscreenTransition(_ type: FullscreenTransitionType) {}
 
     open func willBeRemoved(from slideshow: ImageSlideshow) {
         cancelPendingLoad()
@@ -275,6 +225,26 @@ open class ImageSlideshowItem: UIScrollView, SlideshowItemProtocol, ZoomableSlid
         }
     }
 
+    private func screenSize() -> CGSize {
+        return CGSize(width: frame.width, height: frame.height)
+    }
+
+    private func setContentViewToCenter() {
+        var intendHorizon = (screenSize().width - imageViewWrapper.frame.width ) / 2
+        var intendVertical = (screenSize().height - imageViewWrapper.frame.height ) / 2
+        intendHorizon = intendHorizon > 0 ? intendHorizon : 0
+        intendVertical = intendVertical > 0 ? intendVertical : 0
+        contentInset = UIEdgeInsets(top: intendVertical, left: intendHorizon, bottom: intendVertical, right: intendHorizon)
+    }
+
+    private func clearContentInsets() {
+        contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    }
+
+    private func isFullScreen() -> Bool {
+        return imageViewWrapper.frame.width >= screenSize().width && imageViewWrapper.frame.height >= screenSize().height
+    }
+
     // MARK: UIScrollViewDelegate
 
     public func scrollViewDidZoom(_ scrollView: UIScrollView) {
@@ -282,6 +252,6 @@ open class ImageSlideshowItem: UIScrollView, SlideshowItemProtocol, ZoomableSlid
     }
 
     public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return zoomEnabled ? contentView : nil
+        return zoomEnabled ? imageViewWrapper : nil
     }
 }

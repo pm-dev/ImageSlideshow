@@ -21,9 +21,7 @@ open class AVSlideshowDataSource: ImageSlideshowDataSource {
                 source: avInput,
                 pausedOverlayView: pausedOverlayView,
                 activityIndicator: slideshow.activityIndicator?.create(),
-                mediaContentMode: slideshow.contentScaleMode,
-                zoomEnabled: slideshow.zoomEnabled,
-                maximumScale: slideshow.maximumScale)
+                mediaContentMode: slideshow.contentScaleMode)
         }
         return super.itemFor(input, in: slideshow)
     }
