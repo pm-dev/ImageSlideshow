@@ -15,6 +15,9 @@ let package = Package(
             name: "MediaSlideshow/Alamofire",
             targets: ["MediaSlideshowAlamofire"]),
         .library(
+            name: "MediaSlideshow/AV",
+            targets: ["MediaSlideshowAV"]),
+        .library(
             name: "MediaSlideshow/SDWebImage",
             targets: ["MediaSlideshowSDWebImage"]),
         .library(
@@ -34,14 +37,17 @@ let package = Package(
                 "Classes/Core/ActivityIndicator.swift",
                 "Classes/Core/Bundle+Module.swift",
                 "Classes/Core/FullScreenSlideshowViewController.swift",
+                "Classes/Core/ImageSource.swift",
                 "Classes/Core/MediaSlideshow.swift",
                 "Classes/Core/MediaSlideshowImageSlide.swift",
-                "Classes/Core/ImageSource.swift",
+                "Classes/Core/MediaSlideshowSlide.swift",
+                "Classes/Core/MediaSource.swift",
                 "Classes/Core/PageIndicator.swift",
                 "Classes/Core/PageIndicatorPosition.swift",
                 "Classes/Core/SwiftSupport.swift",
                 "Classes/Core/UIImage+AspectFit.swift",
                 "Classes/Core/UIImageView+Tools.swift",
+                "Classes/Core/ZoomableMediaSlideshowSlide.swift",
                 "Classes/Core/ZoomAnimatedTransitioning.swift",
             ],
             resources: [
@@ -53,6 +59,17 @@ let package = Package(
             dependencies: ["MediaSlideshow", "AlamofireImage"],
             path: "MediaSlideshow/Classes/InputSources",
             sources: ["AlamofireSource.swift"]),
+        .target(
+            name: "MediaSlideshowAV",
+            dependencies: ["MediaSlideshow"],
+            path: "MediaSlideshow/Classes/AV",
+            sources: [
+                "AVPlayerView.swift",
+                "AVSource.swift",
+                "ImageAndVideoSlideshowDataSource.swift",
+                "MediaSlideshowAVSlide.swift",
+                "UIView+AV.swift"
+            ]),
         .target(
             name: "MediaSlideshowSDWebImage",
             dependencies: ["MediaSlideshow", "SDWebImage"],

@@ -26,6 +26,8 @@ PODS:
   - MediaSlideshow/Alamofire (1.9.2):
     - AlamofireImage (~> 4.0)
     - MediaSlideshow/Core
+  - MediaSlideshow/AV (1.9.2):
+    - MediaSlideshow/Core
   - MediaSlideshow/Core (1.9.2)
   - MediaSlideshow/Kingfisher (1.9.2):
     - Kingfisher (> 3.0)
@@ -41,6 +43,7 @@ DEPENDENCIES:
   - MediaSlideshow (from `../`)
   - MediaSlideshow/AFURL (from `../`)
   - MediaSlideshow/Alamofire (from `../`)
+  - MediaSlideshow/AV (from `../`)
   - MediaSlideshow/Kingfisher (from `../`)
   - MediaSlideshow/SDWebImage (from `../`)
 
@@ -61,9 +64,9 @@ SPEC CHECKSUMS:
   Alamofire: 2291f7d21ca607c491dd17642e5d40fdcda0e65c
   AlamofireImage: c4a2ba349885fb3064feb74d2e547bd42ce9be10
   Kingfisher: adde87a4f74f6a3845395769354efff593581740
-  MediaSlideshow: 1b4242db8c3631487991e94c1728c838334777b5
+  MediaSlideshow: 70db687e353e971f6b96ca2d460ae097abae427b
   SDWebImage: b969dcfc02c40a5da71eac0b03b8f1a0c794a86f
 
-PODFILE CHECKSUM: 6778c0e4ca0ebfefaca176efa5e24d3acba84b50
+PODFILE CHECKSUM: 9122cf9250f3c65f1e24180c6168a7e37ec53a4e
 
 COCOAPODS: 1.8.4

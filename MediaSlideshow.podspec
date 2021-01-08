@@ -54,6 +54,12 @@ Media slideshow is a Swift library providing customizable image (and optionally,
     subspec.source_files = 'MediaSlideshow/Classes/InputSources/AlamofireSource.swift'
   end
 
+  s.subspec 'AV' do |subspec|
+    subspec.dependency 'MediaSlideshow/Core'
+    subspec.source_files = 'MediaSlideshow/Classes/AV/**/*.swift'
+    subspec.resources = 'MediaSlideshow/Assets/AVAssets.xcassets'
+  end
+
   s.subspec 'SDWebImage' do |subspec|
     subspec.dependency 'MediaSlideshow/Core'
     subspec.dependency 'SDWebImage', '>= 3.7'

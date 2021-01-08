@@ -348,6 +348,9 @@ open class MediaSlideshow: UIView {
         }
 
         loadImages(for: scrollViewPage)
+        if slides.count > scrollViewPage {
+            slides[scrollViewPage].didAppear(in: self)
+        }
     }
 
     private func loadImages(for scrollViewPage: Int) {
@@ -457,9 +460,11 @@ open class MediaSlideshow: UIView {
 
     fileprivate func setCurrentPageForScrollViewPage(_ page: Int) {
         if scrollViewPage != page {
-            // current page has changed, zoom out this image
-            if slides.count > scrollViewPage, let zoomable = slides[scrollViewPage] as? ZoomableMediaSlideshowSlide {
-                zoomable.zoomOut()
+            if slides.count > scrollViewPage {
+                slides[scrollViewPage].didDisappear(in: self)
+            }
+            if slides.count > page {
+                slides[page].didAppear(in: self)
             }
         }
 

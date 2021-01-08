@@ -138,6 +138,12 @@ open class MediaSlideshowImageSlide: UIScrollView, UIScrollViewDelegate, Zoomabl
         maximumZoomScale = calculateMaximumScale()
     }
 
+    public func cancelPendingLoad() {
+        image.cancelLoad?(on: imageView)
+    }
+
+    // MARK: - MediaSlideshowSlide
+
     public func transitionImageView() -> UIImageView {
         imageView
     }
@@ -170,10 +176,6 @@ open class MediaSlideshowImageSlide: UIScrollView, UIScrollViewDelegate, Zoomabl
         self.imageView.image = nil
     }
 
-    public func cancelPendingLoad() {
-        image.cancelLoad?(on: imageView)
-    }
-
     public func willBeRemoved(from slideshow: MediaSlideshow) {
         cancelPendingLoad()
     }
@@ -181,6 +183,16 @@ open class MediaSlideshowImageSlide: UIScrollView, UIScrollViewDelegate, Zoomabl
     func retryLoadImage() {
         self.loadMedia()
     }
+
+    public func didAppear(in slideshow: MediaSlideshow) {
+        slideshow.unpauseTimer()
+    }
+
+    public func didDisappear(in slideshow: MediaSlideshow) {
+        zoomOut()
+    }
+
+    public func willStartFullscreenTransition(_ type: FullscreenTransitionType) {}
 
     // MARK: - Image zoom & size
 
@@ -244,12 +256,14 @@ open class MediaSlideshowImageSlide: UIScrollView, UIScrollViewDelegate, Zoomabl
 
 }
 
-open class ImageMediaSlideshowDataSource: MediaSlideshowDataSource {
+@objcMembers
+open class ImageMediaSlideshowDataSource: NSObject, MediaSlideshowDataSource {
 
     open var sources: [ImageSource]
 
     public init(sources: [ImageSource] = []) {
         self.sources = sources
+        super.init()
     }
 
     public func sourcesInMediaSlideshow(_ mediaSlideshow: MediaSlideshow) -> [MediaSource] {

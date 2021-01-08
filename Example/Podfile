@@ -5,6 +5,7 @@ target 'MediaSlideshow_Example' do
     pod "MediaSlideshow", :path => "../"
     pod "MediaSlideshow/AFURL", :path => "../"
     pod "MediaSlideshow/Alamofire", :path => "../"
+    pod "MediaSlideshow/AV", :path => "../"
     pod "MediaSlideshow/SDWebImage", :path => "../"
     pod "MediaSlideshow/Kingfisher", :path => "../"
 end

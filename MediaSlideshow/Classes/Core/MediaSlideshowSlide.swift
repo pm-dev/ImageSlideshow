@@ -21,4 +21,10 @@ public protocol MediaSlideshowSlide {
     func loadMedia()
 
     func releaseMedia()
+
+    func didAppear(in slideshow: MediaSlideshow)
+
+    func didDisappear(in slideshow: MediaSlideshow)
+
+    func willStartFullscreenTransition(_ type: FullscreenTransitionType)
 }
